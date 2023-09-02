@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block content %}
+<main class="w-full">
+
+    <div class="container bg-brand-light-gray border border-brand-light-border p-4 my-16">
+
+
+
+        <h4 class="text-2xl font-bold mb-6 basis-full">View Orders</h4>
+        <table class="table-auto w-full ">
+            <thead>
+            <tr>
+                <th class="text-start">#</th>
+                <th class="text-start">Customer</th>
+                <th class="text-start">Order Items</th>
+                <th class="text-start">Total</th>
+            </tr>
+            </thead>
+            <tbody>
+            <?php foreach($orders as $order){
+                        $orderItems = OrderItem::getOrderItemsByOrderId($order->id);
+            $items = '';
+            echo '<tr class="hover:bg-brand-light-border border-b last:border-0 border-brand-light-border">';
+                echo '<td class="p-1">#'. $order->id .'</td>';
+                echo '<td class="p-1">'. $order->full_name .'<br>Macedonia<br>'. $order->address .'</td>';
+                foreach($orderItems as $item){
+                $items = $items . $item->quantity . ' x ' . $item->title . ' $' . $item->price . ' ($' . $item->total_price . ')<br>';
+                }
+                echo '<td class="p-1">'. $items .'</td>';
+                echo '<td class="p-1">$'. $order->order_total .'</td>';
+                echo '</tr>';
+            }
+
+            ?>
+            </tbody>
+        </table>
+
+
+    </div>
+</main>
+
+<?php require 'includes/footer.php' ?>
+{% endblock content %}

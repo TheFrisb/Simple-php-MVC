@@ -8,13 +8,19 @@ use Core\objects;
 class Product extends objects
 {
 
-    private string $title;
-    private string $thumbnail_path;
-    private int $regular_price;
-    private int $sale_price;
+    public string $title;
+    public string $thumbnail_path;
+    public int $regular_price;
+    public int $sale_price;
+
+    /**
+     * @param string $title
+     */
+    public function __construct(){}
 
 
-    public function getTableName(): string {
+
+    public static function getTableName(): string {
         return 'products';
     }
 

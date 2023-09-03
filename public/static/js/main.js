@@ -22,11 +22,11 @@ $(document).ready(function (){
 
     function createCartItem(product){
         let newCartItem = cartItemTemplate.clone();
-        newCartItem.attr('data-product-id', product.id);
-        newCartItem.find('.cartItemThumbnail').attr('src', product.thumbnail); 
+        newCartItem.attr('data-product-id', product.product_id);
+        newCartItem.find('.cartItemThumbnail').attr('src', product.thumbnail_path);
         newCartItem.find('.cartItemTitle').text(product.title);
-        newCartItem.find('.cartItemQuantity').text(product.currentQuantity);
-        newCartItem.find('.cartItemQuantityInput').val(product.currentQuantity);
+        newCartItem.find('.cartItemQuantity').text(product.quantity);
+        newCartItem.find('.cartItemQuantityInput').val(product.quantity);
         newCartItem.find('.cartItemSalePrice').text(product.sale_price); 
         newCartItem.show();
         cartContent.append(newCartItem);
@@ -36,7 +36,7 @@ $(document).ready(function (){
     function createCheckoutItem(product){
         let newCheckoutItem = `<tr class="checkoutItem" data-product-id="${product.id}">
                 <td>
-                    <span class="checkoutItemQuantity">${product.currentQuantity}</span> x <span class="font-semibold checkoutItemTitle">${product.title}</span>
+                    <span class="checkoutItemQuantity">${product.quantity}</span> x <span class="font-semibold checkoutItemTitle">${product.title}</span>
                 </td>
                 <td>
                     <span class="checkoutItemSalePrice">${product.sale_price}</span>$
@@ -118,25 +118,24 @@ $(document).ready(function (){
         let productId = parseInt(productCard.data('product-id'));
         
         $.ajax({
-            url: 'api/cart-actions',
+            url: '/api/add-to-cart',
             method: 'POST',
             data: {
                 'productId': productId,
-                'action': 'add'
             },
             success: function(response){
                 console.log(response);
-                data = response;
+                let data = response;
                 if(emptyCartText.is(':visible')){
                     emptyCartText.hide();
                     cartMakeBuyable(data.cartTotal);
                 }
-                let checkProduct = $('.cartItem[data-product-id="' + data.product.id + '"]');
+                let checkProduct = $('.cartItem[data-product-id="' + data.product.product_id + '"]');
                 if(checkProduct.length){
-                    checkProduct.find('.cartItemQuantity').text(data.product.currentQuantity);
-                    checkProduct.find('.cartItemQuantityInput').val(data.product.currentQuantity);
+                    checkProduct.find('.cartItemQuantity').text(data.product.quantity);
+                    checkProduct.find('.cartItemQuantityInput').val(data.product.quantity);
                     let checkoutProduct = $('.checkoutItem[data-product-id="' + data.product.id + '"]');
-                    checkoutProduct.find('.checkoutItemQuantity').text(data.product.currentQuantity);
+                    checkoutProduct.find('.checkoutItemQuantity').text(data.product.quantity);
                 } else {
                     createCartItem(data.product);
                     createCheckoutItem(data.product);
@@ -156,11 +155,10 @@ $(document).ready(function (){
         let productId = parseInt(cartItem.data('product-id'));
         console.log(productId)
         $.ajax({
-            url: 'api/cart-actions',
+            url: 'api/remove-product',
             method: 'POST',
             data: {
                 'productId': productId,
-                'action': 'remove',
             },
             success: function(response){
                 let data = response
@@ -172,7 +170,7 @@ $(document).ready(function (){
                 }
                 cartTotalHolder.text(data.cartTotal);
                 checkoutTotalHolder.text(data.cartTotal);
-                $('.checkoutItem[data-product-id="' + data.product.id + '"]').remove();
+                $('.checkoutItem[data-product-id="' + data.product.product_id + '"]').remove();
             },
             error: function(xhr, status, error) {
                 console.error(xhr.responseText);
@@ -192,21 +190,20 @@ $(document).ready(function (){
             quantity++;
         }
         $.ajax({
-            url: 'api/cart-actions',
+            url: 'api/update-product-quantity',
             method: 'POST',
             data: {
                 'productId': productId,
-                'action': 'update',
                 'quantity': quantity
             },
             success: function(response){
                 console.log(response);
-                data = response;
+                let data = response;
                 cartQuantityHolder.text(data.totalItems);
                 cartTotalHolder.text(data.cartTotal);
                 checkoutTotalHolder.text(data.cartTotal);
-                let checkoutEl = $('.checkoutItem[data-product-id="' + data.product.id + '"]');
-                if(!data.inCart){
+                let checkoutEl = $('.checkoutItem[data-product-id="' + data.product.product_id + '"]');
+                if(data.product.quantity === 0){
                     cartItem.remove();
                     checkoutEl.remove();
                     if(data.totalItems === 0){
@@ -214,9 +211,9 @@ $(document).ready(function (){
                         cartMakeUnBuyable();
                     }
                 } else {
-                    cartItem.find('.cartItemQuantityInput').val(data.product.currentQuantity);
-                    cartItem.find('.cartItemQuantity').text(data.product.currentQuantity);
-                    checkoutEl.find('.checkoutItemQuantity').text(data.product.currentQuantity);
+                    cartItem.find('.cartItemQuantityInput').val(data.product.quantity);
+                    cartItem.find('.cartItemQuantity').text(data.product.quantity);
+                    checkoutEl.find('.checkoutItemQuantity').text(data.product.quantity);
                 }
                 
             }
@@ -233,7 +230,6 @@ $(document).ready(function (){
             method: 'POST',
             data: {
                 'productId': productId,
-                'action': 'update',
                 'quantity': quantity
             },
             success: function(response){
@@ -242,8 +238,8 @@ $(document).ready(function (){
                 cartQuantityHolder.text(data.totalItems);
                 cartTotalHolder.text(data.cartTotal);
                 checkoutTotalHolder.text(data.cartTotal);
-                let checkoutEl = $('.checkoutItem[data-product-id="' + data.product.id + '"]');
-                if(!data.inCart){
+                let checkoutEl = $('.checkoutItem[data-product-id="' + data.product.product_id + '"]');
+                if(data.product.quantity === 0){
                     cartItem.remove();
                     checkoutEl.remove();
                     if(data.totalItems === 0){
@@ -251,9 +247,9 @@ $(document).ready(function (){
                         cartMakeUnBuyable();
                     }
                 } else {
-                    cartItem.find('.cartItemQuantityInput').val(data.product.currentQuantity);
-                    cartItem.find('.cartItemQuantity').text(data.product.currentQuantity);
-                    checkoutEl.find('.checkoutItemQuantity').text(data.product.currentQuantity);
+                    cartItem.find('.cartItemQuantityInput').val(data.product.quantity);
+                    cartItem.find('.cartItemQuantity').text(data.product.quantity);
+                    checkoutEl.find('.checkoutItemQuantity').text(data.product.quantity);
                 }
                 
             }
@@ -369,9 +365,8 @@ $(document).ready(function (){
         data.append('thumbnail', thumbnail);
         data.append('regular_price', regular_price);
         data.append('sale_price', sale_price);
-        data.append('action', 'create');
         $.ajax({
-            url: "api/manage-products",
+            url: "admin/api/create-new-product",
             type: "POST",
             data: data,
             processData: false,
@@ -381,7 +376,7 @@ $(document).ready(function (){
                 let newEl = `
                 <div class="product flex flex-col items-start justify-center text-start gap-4 p-2 hover:border-2 hover:border-brand-light-border" data-product-id="${product.id}">
                     <div class="relative">
-                        <img src="${product.thumbnail}" alt="Thumbnail image for a product">
+                        <img src="${product.thumbnail_path}" alt="Thumbnail image for a product">
                     </div>
                     <div class="px-4 font-semibold w-full ">
                         <h4>${product.title}</h4>
@@ -417,13 +412,12 @@ $(document).ready(function (){
             return false;
         } else {
             $.ajax({
-                url: "api/manage-products",
+                url: "admin/api/update-product",
                 type: "POST",
                 data: {
                     'productId': product_id,
                     'regular_price': regular_price,
                     'sale_price': sale_price,
-                    'action': 'update',
                 },
                 success: function(response){
                     let product = response.product;
@@ -438,11 +432,10 @@ $(document).ready(function (){
         let product_id = parseInt(card.data('product-id'));
 
         $.ajax({
-            url: "api/manage-products",
+            url: "admin/api/delete-product",
             type: "POST",
             data: {
                 'productId': product_id,
-                'action': 'remove',
             },
             success: function(response){
                 let product = response.product;

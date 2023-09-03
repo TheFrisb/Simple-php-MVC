@@ -27,28 +27,36 @@ class Router{
         $callback = $this->routes[$method][$path] ?? false;
 
         if ($this->isStaticFile($path)) {
-            return $this->serveStaticFile($path);
+            $this->serveStaticFile($path);
+
         }
 
 
         if($callback === false){
+            http_response_code(404);
             echo '<h1>404</h1>';
-            echo var_dump($this->routes);
+            var_dump($this->routes); // debugging purposes...
             exit;
         }
 
         if (is_string($callback)){
-            return '??';
+            // implement
         }
         if (is_array($callback)){
             $callback[0] = new $callback[0]();
         }
-        return call_user_func($callback);
+        $result = call_user_func($callback);
+        if($result instanceof JsonResponse){
+            $result->send();
+            return;
+        }
+        return $result;
     }
 
 
     private function isStaticFile($path)
     {
+
         $ext = pathinfo($path, PATHINFO_EXTENSION);
         $allowedExt = ['css', 'js', 'png', 'jpg', 'jpeg', 'gif', 'svg']; // add more as needed
 
@@ -68,6 +76,7 @@ class Router{
 
         header("Content-Type: $mimeType");
         readfile($fullPath);
+
         exit;
     }
 

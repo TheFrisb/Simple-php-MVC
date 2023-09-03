@@ -13,7 +13,10 @@ class BaseController
      * @throws RuntimeError
      * @throws LoaderError
      */
-    public function renderTemplate($pathToTemplate, $context = []){
-        echo Application::$twig->render($pathToTemplate, $context);
+    public function renderTemplate($pathToTemplate, $context = [])
+    {
+        return Application::$twig->render($pathToTemplate, $context);
     }
+
+
 }

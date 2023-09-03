@@ -5,6 +5,7 @@ namespace Core;
 class Request {
     public array $get = [];
     public array $post = [];
+    public array $files = [];
     public array $server = [];
 
 
@@ -12,6 +13,7 @@ class Request {
     {
         $this->get = $_GET;
         $this->post = $_POST;
+        $this->files = $_FILES;
         $this->server = $_SERVER;
     }
 

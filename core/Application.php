@@ -3,14 +3,17 @@ namespace Core;
 use \Twig\Environment;
 
 class Application {
+
+    public static Application $app;
     public static string $ROOT_DIR;
     public static Environment $twig;
     public Router $router;
     public Request $request;
     public Database $db;
     public Response $response;
+    public CartSession $cartSession;
 
-    public static Application $app;
+
 
     public function __construct($rootPath, $twigLoader){
         self::$ROOT_DIR = $rootPath;
@@ -18,6 +21,7 @@ class Application {
         $this->response = new Response();
         $this->router = new Router($this->request, $this->response);
         $this->db = new Database();
+        $this->cartSession = new CartSession();
         self::$twig = new Environment($twigLoader, [
             'cache' => $rootPath . '/runtime/cache',
             'debug' => true,
@@ -26,7 +30,9 @@ class Application {
 
     }
 
-    public function run(){
+
+    public function run(): void
+    {
         echo $this->router->resolve();
     }
 }

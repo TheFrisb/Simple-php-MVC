@@ -14,7 +14,7 @@ abstract class BaseModel // nedava instanca
 //    public function validate()
 //    {
 //        foreach ($this->getRequiredFields() as $field => $required){
-//            // pass in model so load only required data // if valid save if not fuck off
+//            // pass in model so load only required data // if valid save if not return sth
 //        }
 //    }
 

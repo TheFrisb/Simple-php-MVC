@@ -1,11 +1,8 @@
-1. Add create objects
-2. Add delete objects
-3. Add update objects
-4. Add get objects
-5. Add cart session wrapper
-6. Add paginator
-7. Add object i input validation
-8. Create api controllers
-9. Flesh out json response
-10. Add update remove from cart
-11. fix static files issue
+
+
+2. Fix Apicontroller coupling
+3. Fix input validation
+4. Fix object field validation
+
+6. Simplify controllers
+7. Render orders

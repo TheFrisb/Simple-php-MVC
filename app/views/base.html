@@ -8,10 +8,15 @@
     <link rel="stylesheet" href="../../static/css/output.css">
     <title>{{ title }}</title>
 </head>
-<body class="bg-brand-dark-gray font-poppins text-brand-dark-text">
-    {% include 'includes/header.html' %}
-    {% block content %}{% endblock content %}
-    {% include 'includes/footer.html' %}
+<body class="bg-brand-dark-gray font-poppins text-brand-dark-text flex flex-col" style="min-height:100vh">
+
+        {% include 'includes/header.html' %}
+        <main class="w-full mt-8" style="flex-grow: 1">
+            {% block content %}{% endblock content %}
+        </main>
+        {% include 'includes/footer.html' %}
+
+
 
     <!-- Jquery Google CDN !-->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>

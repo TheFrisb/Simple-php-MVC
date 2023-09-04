@@ -50,7 +50,7 @@ abstract class objects extends BaseModel
         $tableName = static::getTableName();
         $query = "SELECT * FROM " . $tableName;
 
-        if($limit && $limit >= 0 && $offset && $offset >= 0){
+        if($limit !== null && $limit >= 0 && $offset !== null && $offset >= 0){
             $query .= " LIMIT :limit OFFSET :offset";
             $statement = static::prepare($query);
             $statement->bindParam(':limit', $limit);

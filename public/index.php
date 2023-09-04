@@ -29,6 +29,8 @@ $app->router->addPostRoute('/admin/api/delete-product', [\App\controllers\ShopMa
 $app->router->addPostRoute('/admin/api/update-product', [\App\controllers\ShopManagerController::class, 'updateProduct']);
 $app->router->addPostRoute('/admin/api/create-new-product', [\App\controllers\ShopManagerController::class, 'createProduct']);
 
+// Form submission routes
+$app->router->addPostRoute('/form/place-order', [\App\controllers\CartController::class, 'checkout']);
 
 // Start app
 $app->run();

@@ -21,7 +21,7 @@ class Order extends objects
         return ['full_name', 'address', 'order_total', 'created_at'];  // Updated fields
     }
 
-    public function getRequiredFields(): array {
+    public function getRequiredFieldsWithRules(): array {
         return [
             'full_name' => true,
             'address' => true,

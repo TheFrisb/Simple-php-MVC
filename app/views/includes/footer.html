@@ -1,4 +1,14 @@
-
+{% if paginator %}
+<div class="container text-center my-8 px-6 overflow-hidden text-ellipsis">
+  {% if paginator.hasPreviousPage() %}
+    <a href='?page={{ paginator.previousPage() }}' class='p-4 border border-brand-light-border bg-brand-light-blue text-white'><</a>
+  {% endif %}
+  <span>Page {{ paginator.getCurrentPage() }} of {{ paginator.getTotalPages() }}</span>
+  {% if paginator.hasNextPage() %}
+    <a href='?page={{ paginator.nextPage() }}' class='p-4 border border-brand-light-border bg-brand-light-blue text-white'>></a>
+  {% endif %}
+</div>
+{% endif %}
 <footer class="bg-brand-dark-text py-4">
   <div class="container text-white/60 text-sm">
     <p>© {{ "now"|date("Y") }} Electronic Store. Powered by Electronic Store</p>

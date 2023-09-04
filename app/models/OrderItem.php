@@ -22,7 +22,7 @@ class OrderItem extends objects
         return ['order_id', 'product_id', 'quantity', 'price', 'line_total'];  // Included line_total
     }
 
-    public function getRequiredFields(): array {
+    public function getRequiredFieldsWithRules(): array {
         return [
             'order_id' => true,
             'product_id' => true,

@@ -1,11 +1,20 @@
 <?php
 
+/*
+ * A migrations script called by Core/Database->migrate();
+ * All migration files in this folder are read, and their sql executed
+ * Can be used with php migrations.php at top root of the project.
+ * However not fully finished, there are no checks for existing tables,
+ * migrations are not stored properly in the database, and not properly checked if they
+ * have already been executed.
+ *
+ */
 class migration0001_initial{
     public function create(): void
     {
         $db = \Core\Application::$app->db;
         $SQL_products = "
-            CREATE TABLE IF NOT EXISTS products (
+            CREATE TABLE IF products (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 title VARCHAR(255) NOT NULL,
                 thumbnail_path VARCHAR(255) NOT NULL,
@@ -32,6 +41,7 @@ class migration0001_initial{
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 order_id INTEGER NOT NULL,
                 product_id INTEGER NOT NULL,
+                product_title VARCHAR(255) NOT NULL,
                 quantity INTEGER NOT NULL,
                 price INTEGER NOT NULL,
                 line_total INTEGER NOT NULL,

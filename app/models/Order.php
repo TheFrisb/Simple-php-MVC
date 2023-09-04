@@ -2,9 +2,9 @@
 
 namespace App\models;
 
-use Core\objects;
+use Core\DatabaseModel;
 
-class Order extends objects
+class Order extends DatabaseModel
 {
     public string $full_name;
     public string $address;
@@ -18,7 +18,7 @@ class Order extends objects
     }
 
     public function getFields(): array {
-        return ['full_name', 'address', 'order_total', 'created_at'];  // Updated fields
+        return ['full_name', 'address', 'order_total'];
     }
 
     public function getRequiredFieldsWithRules(): array {
@@ -26,9 +26,9 @@ class Order extends objects
             'full_name' => true,
             'address' => true,
             'order_total' => true,
-            'created_at' => true  // Updated fields
         ];
     }
+
 }
 
 

@@ -2,6 +2,8 @@
 
 namespace App\controllers;
 
+use App\models\Order;
+use App\models\OrderItem;
 use App\models\Product;
 use App\Services\Paginator;
 use Core\Application;
@@ -19,6 +21,9 @@ class ShopController extends BaseController
         $currentPage = Application::$app->request->get['page'] ?? 1;
         $paginator = new Paginator(Product::class, (int)$currentPage, 16);
         $products = $paginator->getItems();
+        $asd = OrderItem::all();
+
+
         $context = [
             'title' => 'Shop',
             'products' => $products,
@@ -32,9 +37,13 @@ class ShopController extends BaseController
     }
 
     public function thank_you(){
+        $orderId = Application::$app->request->get['order_id'];
+        $order = Order::get(intval($orderId));
+        $orderItems = OrderItem::filter('order_id', $order->id);
         $context = [
             'title' => 'Thank you!',
-            'products' => Product::all(),
+            'order' => $order,
+            'orderItems' => $orderItems,
             'cartItems' => Application::$app->cartSession->getItems(),
             'cart_total' => Application::$app->cartSession->getCartTotal(),
             'number_of_cart_items' => Application::$app->cartSession->getNumberOfCartItems()
@@ -60,8 +69,18 @@ class ShopController extends BaseController
     }
 
     public function view_orders(){
+        $currentPage = Application::$app->request->get['page'] ?? 1;
+        $paginator = new Paginator(Order::class, (int)$currentPage, 16);
+        $orders = $paginator->getItemsAsArray();
+
+        foreach($orders as &$order){
+            $order['orderItems'] = OrderItem::filter('order_id', $order['id']);
+        }
+
         $context = [
             'title' => 'View orders',
+            'orders' => $orders,
+            'paginator' => $paginator,
             'cartItems' => Application::$app->cartSession->getItems(),
             'cart_total' => Application::$app->cartSession->getCartTotal(),
             'number_of_cart_items' => Application::$app->cartSession->getNumberOfCartItems()

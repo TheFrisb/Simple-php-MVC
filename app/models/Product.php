@@ -3,9 +3,9 @@
 namespace App\models;
 
 use Core\BaseModel;
-use Core\objects;
+use Core\DatabaseModel;
 
-class Product extends objects
+class Product extends DatabaseModel
 {
 
     public string $title;
@@ -27,15 +27,5 @@ class Product extends objects
     public function getFields(): array {
         return ['title', 'thumbnail_path', 'regular_price', 'sale_price'];
     }
-
-    public function getRequiredFieldsWithRules() : array{
-        return [
-            'title' => self::RULE_STRING,
-            'thumbnail_path' => self::RULE_STRING,
-            'regular_price' => self::RULE_INTEGER,
-            'sale_price' => self::RULE_INTEGER
-        ];
-    }
-
 
 }

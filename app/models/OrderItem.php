@@ -2,12 +2,13 @@
 
 namespace App\models;
 
-use Core\objects;
+use Core\DatabaseModel;
 
-class OrderItem extends objects
+class OrderItem extends DatabaseModel
 {
     public int $order_id;
     public int $product_id;
+    public string $product_title;
     public int $quantity;
     public int $price;
     public int $line_total;  // Added line_total field
@@ -18,17 +19,21 @@ class OrderItem extends objects
         return 'order_items';
     }
 
+    public static function getRelatedFieldName(): string {
+        return 'order_id';
+    }
     public function getFields(): array {
-        return ['order_id', 'product_id', 'quantity', 'price', 'line_total'];  // Included line_total
+        return ['order_id', 'product_id', 'product_title', 'quantity', 'price', 'line_total'];
     }
 
     public function getRequiredFieldsWithRules(): array {
         return [
             'order_id' => true,
             'product_id' => true,
+            'product_title' => true,
             'quantity' => true,
             'price' => true,
-            'line_total' => true  // Included line_total
+            'line_total' => true
         ];
     }
 }

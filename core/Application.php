@@ -2,6 +2,9 @@
 namespace Core;
 use \Twig\Environment;
 
+/*
+ * This is the "container" of the application
+ */
 class Application {
 
     public static Application $app;

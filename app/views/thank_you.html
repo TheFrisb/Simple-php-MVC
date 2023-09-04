@@ -5,7 +5,7 @@
     <div class="container bg-brand-light-gray border border-brand-light-border p-4 my-16">
 
 
-        {% if not orders %}
+        {% if not order %}
         <h4 class="text-2xl font-bold mb-6 basis-full">Create an order from the main page</h4>
         {% else %}
         <div class="flex flex-col items-start justify-center">
@@ -25,16 +25,16 @@
                 {% for orderItem in orderItems %}
 
                 <tr>
-                    <td>{{ orderItem.quantity }} x <span class="font-semibold">{{ orderItem.title }}</span></td>
-                    <td>${{ orderItem.price }} (total: ${{ orderItem.total_price }})</td>
+                    <td>{{ orderItem.quantity }} x <span class="font-semibold">{{ orderItem.product_title }}</span></td>
+                    <td>${{ orderItem.price }} (total: ${{ orderItem.line_total }})</td>
                 </tr>
 
                 {% endfor %}
                 </tbody>
                 <tfoot class="border-t border-brand-light-border">
                 <tr>
-                    <td>Total:</td>
-                    <td>{{ order.total }}</td>
+                    <td>Total</td>
+                    <td>${{ order.order_total }}</td>
                 </tr>
                 </tfoot>
             </table>

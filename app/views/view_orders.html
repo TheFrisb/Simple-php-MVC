@@ -7,6 +7,7 @@
 
 
         <h4 class="text-2xl font-bold mb-6 basis-full">View Orders</h4>
+        {% if orders %}
         <table class="table-auto w-full ">
             <thead>
             <tr>
@@ -17,23 +18,23 @@
             </tr>
             </thead>
             <tbody>
-            <?php foreach($orders as $order){
-                        $orderItems = OrderItem::getOrderItemsByOrderId($order->id);
-            $items = '';
-            echo '<tr class="hover:bg-brand-light-border border-b last:border-0 border-brand-light-border">';
-                echo '<td class="p-1">#'. $order->id .'</td>';
-                echo '<td class="p-1">'. $order->full_name .'<br>Macedonia<br>'. $order->address .'</td>';
-                foreach($orderItems as $item){
-                $items = $items . $item->quantity . ' x ' . $item->title . ' $' . $item->price . ' ($' . $item->total_price . ')<br>';
-                }
-                echo '<td class="p-1">'. $items .'</td>';
-                echo '<td class="p-1">$'. $order->order_total .'</td>';
-                echo '</tr>';
-            }
-
-            ?>
+            {% for order in orders %}
+            <tr class="hover:bg-brand-light-border border-b last:border-0 border-brand-light-border">
+                <td class="p-1">#{{ order.id }}</td>
+                <td class="p-1">{{ order.full_name }}<br>Macedonia<br>{{ order.address }}</td>
+                <td class="p-1">
+                    {% for orderItem in order.orderItems %}
+                    {{ orderItem.quantity }} x {{ orderItem.product_title }} ${{ orderItem.price }} (${{ orderItem.line_total }})
+                    {% endfor %}
+                </td>
+                <td class="p-1">${{ order.order_total }}</td>
+            </tr>
+            {% endfor %}
             </tbody>
         </table>
+        {% else %}
+            <p>No orders found in database. Create an order from main page!</p>
+        {% endif %}
 
 
     </div>

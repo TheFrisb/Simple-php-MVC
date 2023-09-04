@@ -9,16 +9,16 @@ use Core\ApiController;
 class ShopManagerController extends ApiController
 {
     public function deleteProduct(){
-        $productId = $this->getPostedProductId();
+        $productId = $this->getPostInt('productId');
 
-        if(!is_numeric($productId)){
+        if($productId === null){
             return $this->jsonResponse([
                 'success' => 'error',
                 'message' => 'Product ID is not a valid integer'
             ], 400);
         }
-        $product = Product::get(intval($productId));
-        if($product){
+        $product = Product::get($productId);
+        if($product !== null){
             $product->delete();
             return $this->jsonResponse([
                 'success' => 'success',
@@ -33,10 +33,10 @@ class ShopManagerController extends ApiController
     }
 
     public function updateProduct(){
-        $productId = $this->getPostedProductId();
-        $sale_price = $this->getPost("sale_price");
-        $regular_price = $this->getPost("regular_price");
-        if(!is_numeric($productId) || !is_numeric($sale_price) || !is_numeric($regular_price)){
+        $productId = $this->getPostInt('productId');
+        $sale_price = $this->getPostInt("sale_price");
+        $regular_price = $this->getPostInt("regular_price");
+        if($productId === null || $sale_price === null || $regular_price === null){
             return $this->jsonResponse([
                 'success' => 'error',
                 'message' => 'Product could not be updated!'
@@ -44,12 +44,12 @@ class ShopManagerController extends ApiController
         }
 
         $fields = [
-            'id' => intval($productId),
-            'sale_price' => intval($sale_price),
-            'regular_price' => intval($regular_price)
+            'id' => $productId,
+            'sale_price' => $sale_price,
+            'regular_price' => $regular_price
         ];
 
-        $product = Product::get(intval($productId));
+        $product = Product::get($productId);
         if($product){
 
             $product->loadData($fields);
@@ -78,18 +78,18 @@ class ShopManagerController extends ApiController
          * A custom validation class would be really useful here,
          * also a custom error printing class per required field ( could be using the methods of BaseModel )
          * would also be really nice.
-         * Also the file uploader class could be made more modular, taking different paths, and not using such
+         * Also the file uploader class could be made more modular, taking different paths and file types, and not using such
          * a hacky solution to generate the file path.
          * However i am too tired now, i've been at this for 10 hours, so i'll cut some corners here.
          */
 
-        $title = $this->getPost('title');
-        $regular_price = $this->getPost('regular_price');
-        $sale_price = $this->getPost('sale_price');
+        $title = $this->getPostString('title');
+        $regular_price = $this->getPostString('regular_price');
+        $sale_price = $this->getPostString('sale_price');
         $thumbnail = $this->getPostFile('thumbnail');
 
 
-        if ($title === '' || !intval($regular_price) || !intval($sale_price) || !isset($thumbnail)) {
+        if ($title === '' || $regular_price === null || $sale_price === null || $thumbnail === null) {
             return $this->jsonResponse([
                 'success' => 'error',
                 'message' => 'Missing or invalid parameters.
@@ -112,8 +112,8 @@ class ShopManagerController extends ApiController
 
         $fields = [
             'title' => $title,
-            'regular_price' => intval($regular_price),
-            'sale_price' => intval($sale_price),
+            'regular_price' => $regular_price,
+            'sale_price' => $sale_price,
             'thumbnail_path' => $fileUploader->generateFileUrl($uploadedFilePath)
         ];
 

@@ -14,9 +14,9 @@ class CartController extends ApiController
 
     public function addToCart(){
 
-        $productId = $this->getPostedProductId();
+        $productId = $this->getPostInt('productId');
 
-        if(!is_numeric($productId)){
+        if($productId === null){
             return $this->jsonResponse([
                 'success' => 'error',
                 'message' => 'Product ID is not a valid integer'
@@ -24,7 +24,7 @@ class CartController extends ApiController
         }
 
 
-        $result = $this->addProductToCart(intval($productId));
+        $result = $this->addProductToCart($productId);
 
         if ($result !== null) {
             return $this->jsonResponse([
@@ -40,17 +40,17 @@ class CartController extends ApiController
     }
 
     public function updateCartItem(){
-        $productId = $this->getPostedProductId();
-        $quantity = $this->getPostedProductQuantity();
+        $productId = $this->getPostInt('productId');
+        $quantity = $this->getPostInt('quantity');
 
-        if(!is_numeric($productId) && is_numeric($quantity)){
+        if($productId === null || $quantity === null){
             return $this->jsonResponse([
                 'success' => 'error',
-                'message' => 'Product ID is not a valid integer'
+                'message' => 'Product ID or quantity are either missing, or not valid integers'
             ], 400);
         }
 
-        $result = $this->updateCartItemQuantity(intval($productId), intval($quantity));
+        $result = $this->updateCartItemQuantity($productId, $quantity);
         if ($result !== null) {
             return $this->jsonResponse([
                 'success' => true,
@@ -66,16 +66,16 @@ class CartController extends ApiController
     }
 
     public function removeCartItem() {
-        $productId = $this->getPostedProductId();
+        $productId = $this->getPostInt('productId');
 
-        if(!is_numeric($productId)){
+        if($productId === null){
             return $this->jsonResponse([
                 'success' => 'error',
                 'message' => 'Product ID is not a valid integer'
             ], 400);
         }
 
-        $result = $this->removeProductFromCart(intval($productId));
+        $result = $this->removeProductFromCart($productId);
 
         if ($result !== null) {
             return $this->jsonResponse([
@@ -97,37 +97,49 @@ class CartController extends ApiController
             return new \Exception("Empty cart");
         }
 
+        $full_name = $this->getPostString('checkoutFullName');
+        $address = $this->getPostString('checkoutAddress');
+
+
+        $orderFields = [
+            'full_name' => $full_name,
+            'address' => $address,
+            'order_total' => Application::$app->cartSession->getCartTotal()
+        ];
+        $cartItems = $this->getCartItems();
+
         $order = new Order();
-        $order->full_name = 'ASD';
-        $order->address = 'ASD';
-        $order->order_total = $this->getCartTotal();
-        $order->created_at = date('Y-m-d H:i:s');
+        $order->loadData($orderFields);
         $order->save();
 
 
-        foreach ($_SESSION['cart'] as $key => $cartItem) {
+        foreach ($cartItems as $cartItem) {
             $product = Product::get($cartItem['product_id']);
-            if ($product) {
+            if ($product !== null) {
+                $orderItemFields = [
+                    'order_id' => $order->id,
+                    'product_id' => $cartItem['product_id'],
+                    'product_title' => $cartItem['title'],
+                    'quantity' => $cartItem['quantity'],
+                    'price' => $cartItem['sale_price'],
+                    'line_total' => $cartItem['sale_price'] * $cartItem['quantity']
+                ];
                 $orderItem = new OrderItem();
-                $orderItem->order_id = $order->id;
-                $orderItem->product_id = $cartItem['product_id'];
-                $orderItem->quantity = $cartItem['quantity'];
-                $orderItem->price = $cartItem['sale_price'];
-                $orderItem->line_total = $cartItem['sale_price'] * $cartItem['quantity'];
+                $orderItem->loadData($orderItemFields);
                 $orderItem->save();
+            } else {
+                return new \Exception("Product not found!");
             }
         }
 
         // Step 4: Clear the cart
         Application::$app->cartSession->clearCart();
 
-        return $this->jsonResponse([
-            'success' => true,
-            'message' => 'Order successfully created',
-            'orderId' => $order->id
-        ], 200);
+        return Application::$app->response->redirect("/thank-you?order_id=$order->id");
 
     }
+
+
 
 
 

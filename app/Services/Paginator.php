@@ -40,6 +40,12 @@ class Paginator
         return $this->modelClass::all($this->itemsPerPage, $offset);
     }
 
+    public function getItemsAsArray(): array|bool
+    {
+        $offset = ($this->current_page - 1) * $this->itemsPerPage;
+        return $this->modelClass::all($this->itemsPerPage, $offset, true);
+    }
+
     public function hasNextPage(): bool
     {
         return $this->current_page < $this->getTotalPages();

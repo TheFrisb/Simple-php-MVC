@@ -16,10 +16,13 @@ class JsonResponse
     }
 
 
-    public function send(): void
+    /*
+     * Returns json data to be echoed, most likely in core/Router.php
+     */
+    public function send()
     {
         http_response_code($this->statusCode);
         header('Content-Type: application/json');
-        echo json_encode($this->data);
+        return json_encode($this->data);
     }
 }

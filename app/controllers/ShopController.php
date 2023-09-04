@@ -3,6 +3,7 @@
 namespace App\controllers;
 
 use App\models\Product;
+use App\Services\Paginator;
 use Core\Application;
 use Core\BaseController;
 class ShopController extends BaseController
@@ -15,9 +16,13 @@ class ShopController extends BaseController
          * Or this context could be wrapped in a method call of the parent class or some other
          * But for debugging purposes it's easier like this.
          */
+        $currentPage = Application::$app->request->get['page'] ?? 1;
+        $paginator = new Paginator(Product::class, (int)$currentPage, 16);
+        $products = $paginator->getItems();
         $context = [
             'title' => 'Shop',
-            'products' => Product::all(),
+            'products' => $products,
+            'paginator' => $paginator,
             'cartItems' => Application::$app->cartSession->getItems(),
             'cart_total' => Application::$app->cartSession->getCartTotal(),
             'number_of_cart_items' => Application::$app->cartSession->getNumberOfCartItems()
@@ -38,9 +43,15 @@ class ShopController extends BaseController
     }
 
     public function edit_products(){
+
+        $currentPage = Application::$app->request->get['page'] ?? 1;
+        $paginator = new Paginator(Product::class, (int)$currentPage, 16);
+        $products = $paginator->getItems();
+
         $context = [
             'title' => 'Edit products',
-            'products' => Product::all(),
+            'products' => $products,
+            'paginator' => $paginator,
             'cartItems' => Application::$app->cartSession->getItems(),
             'cart_total' => Application::$app->cartSession->getCartTotal(),
             'number_of_cart_items' => Application::$app->cartSession->getNumberOfCartItems()
@@ -51,7 +62,6 @@ class ShopController extends BaseController
     public function view_orders(){
         $context = [
             'title' => 'View orders',
-            'products' => Product::all(),
             'cartItems' => Application::$app->cartSession->getItems(),
             'cart_total' => Application::$app->cartSession->getCartTotal(),
             'number_of_cart_items' => Application::$app->cartSession->getNumberOfCartItems()

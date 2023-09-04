@@ -21,6 +21,11 @@ class Request {
         return $this->server['REQUEST_URI'] ?? '/';
     }
 
+    public function parsedUrl(){
+        $urlComponents = parse_url($this->url());
+        return $urlComponents['path'] ?? '/';
+    }
+
     public function method(){
         return $this->server['REQUEST_METHOD'];
     }

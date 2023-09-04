@@ -2,6 +2,8 @@
 
 namespace Core;
 
+use JetBrains\PhpStorm\NoReturn;
+
 class Router{
     public Request $request;
     public Response $response;
@@ -21,8 +23,13 @@ class Router{
         $this->routes['POST'][$path] = $callback;
     }
 
+    public function getRoutes($method): array {
+        return $this->routeMap[$method] ?? [];
+    }
+
     public function resolve(){
-        $path = $this->request->url();
+
+        $path = $this->request->parsedUrl();
         $method = $this->request->method();
         $callback = $this->routes[$method][$path] ?? false;
 
@@ -63,11 +70,12 @@ class Router{
         return in_array($ext, $allowedExt);
     }
 
-    private function serveStaticFile($path)
+    #[NoReturn] private function serveStaticFile($path)
     {
         $fullPath = Application::$ROOT_DIR . '/public' . $path; // assuming your static files are in a 'public' directory
 
         if (!file_exists($fullPath)) {
+            http_response_code(404);
             echo '<h1>404</h1>';
             exit;
         }

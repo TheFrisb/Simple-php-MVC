@@ -1,7 +1,8 @@
 ﻿# Simple-php-MVC
 
  A simple (Obviously unfinished and not production ready) pure PHP Model View Controller framework, with a small e-commerce website integrating the core components.
-
+ Built in 12 hours.
+ 
 Tested only using the php server in PHPStorm(php -S).
 
 Currently, only a few exceptions are handled, exception handling will be pushed in the future.

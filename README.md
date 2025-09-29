@@ -1,7 +1,7 @@
 ﻿# READ ME! (Simple-php-MVC)
 
  A simple (Obviously unfinished and not production ready) pure PHP Model View Controller framework, with a small e-commerce website integrating the core components.
-  Built in 12 hours
+ Built in ~12 hrs for a job application
 
 
 
@@ -64,3 +64,4 @@ Core subfolder:
 
 There is also an option for middlewares but not implemented in the router,
 middlewares can be created in middlewares/, they should be mapped to the routes, and their methods called before calling the user_func() in router.
+
